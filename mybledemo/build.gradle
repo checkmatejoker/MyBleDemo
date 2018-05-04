@@ -37,5 +37,5 @@ publish {
     artifactId = 'tzybletool'                          //项目名称
     publishVersion = '1.0.0'                                //版本号
     desc = 'a tool to connect bluetooth4.0 for android'
-    website = 'https://github.com'
+    website = 'https://github.com/checkmatejoker/MyBleDemo'
 }

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BlueToothDemo</string>
+    <string name="cancel">cancel</string>
+    <string name="warnning1">please connect your device.</string>
+    <string name="search">search.......</string>
+    <string name="connect">connect.......</string>
+</resources>

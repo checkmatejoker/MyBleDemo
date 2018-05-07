@@ -1,5 +1,6 @@
 package com.ihunuo.mybledemo.BleSettings;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.eleven.app.bluetoothlehelper.Peripheral;
@@ -92,5 +93,13 @@ public class CommondManger {
         }
 
         boolean iscan = mPeripheral.write(getmServiceIdStr(),getmChracteristicStr(),msenddata,false);
+        if (iscan)
+        {
+            Log.d("CommondManger","发送成功");
+        }
+        else
+        {
+            Log.d("CommondManger","发送失败");
+        }
     }
 }

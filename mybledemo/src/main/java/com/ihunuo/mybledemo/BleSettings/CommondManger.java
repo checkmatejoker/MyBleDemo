@@ -18,14 +18,14 @@ public class CommondManger {
     private String mChracteristicStr = "";
 
     private String mNotityStr = "";
-
+    public static String madress = "";
 
 
     private BaseActivity baseActivity;
     private Peripheral mPeripheral;
     private static  CommondManger  commondManger;
 
-    public void initCommondManger(String service,String chart, String notitfy,BaseActivity mbaseActivity)
+    public static void initCommondManger(String service,String chart, String notitfy,BaseActivity mbaseActivity)
     {
         if (commondManger==null)
         {

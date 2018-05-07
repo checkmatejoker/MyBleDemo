@@ -8,6 +8,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -31,13 +33,34 @@ public class BaseActivity extends AppCompatActivity {
     public BluetoothAdapter mBluetoothAdapter;
     public BluetoothManager mBluetoothManager;
     public Handler mHandler = new Handler();
+
+
+
     //发送监听
     private boolean mStartBleActivity = false;
 
     public MaterialDialog mloaddiag;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            ActivityInfo info=this.getPackageManager()
+                    .getActivityInfo(getComponentName(),
+                            PackageManager.GET_META_DATA);
+            String serviceid =info.metaData.getString("serviceid");
+            String characteristicid =info.metaData.getString("characteristicid");
+            String notifyid =info.metaData.getString("notifyid");
+
+            CommondManger.initCommondManger(serviceid,characteristicid,notifyid,this);
+        }catch (Exception e)
+        {
+           Log.e("BaseActivity","错误信息，请检查是否配置了蓝牙相关信息");
+        }
+
+
+
     }
 
     @Override
@@ -101,12 +124,14 @@ public class BaseActivity extends AppCompatActivity {
         public void onConnected(Peripheral peripheral) {
             super.onConnected(peripheral);
             CommondManger.getCommondManger().setPeripheral(peripheral);
+            CommondManger.madress = peripheral.getAddress();
         }
 
         @Override
         public void onDisconnected(final Peripheral peripheral) {
             super.onDisconnected(peripheral);
             Log.e(TAG, "onDisconnected");
+            CommondManger.madress = "";
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -267,7 +292,7 @@ public class BaseActivity extends AppCompatActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback =  new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-//            Log.d(TAG, "扫描到设备: " + device.getName());
+            Log.d("BaseActivity", "扫描到设备: " + device.getName());
             final BluetoothDevice finalDevice = device;
             mHandler.post(new Runnable() {
                 @Override
@@ -324,5 +349,12 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
 
+    }
+    public boolean ismStartBleActivity() {
+        return mStartBleActivity;
+    }
+
+    public void setmStartBleActivity(boolean mStartBleActivity) {
+        this.mStartBleActivity = mStartBleActivity;
     }
 }

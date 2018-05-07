@@ -10,11 +10,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".BlueToothActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="serviceid"
+                android:value="0000FFE5-0000-1000-8000-00805f9b34fb"></meta-data>
+            <meta-data
+                android:name="characteristicid"
+                android:value="0000FFE9-0000-1000-8000-00805f9b34fb"></meta-data>
+            <meta-data
+                android:name="notifyid"
+                android:value="0000FFE8-0000-1000-8000-00805f9b34fb"></meta-data>
         </activity>
     </application>
 

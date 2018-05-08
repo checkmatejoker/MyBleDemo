@@ -6,36 +6,37 @@
 android4.3以上，项目配置如下
 ```
 compileSdkVersion 27
-```
+
 minSdkVersion 18
-```
+
 argetSdkVersion 22
 ```
 
 ## 三.接入方式
 在需要使用的模块中引入
+```
 implementation 'com.mybledemo:tzybletool:1.0.+'
-
+```
 ## 四.使用方法
 ### 步骤一 配置：
-```
 在希望初始化蓝牙的界面的activity包含中配置一下三个字段，例子中使用的是蓝牙列表界面，也是示例的第一个界面
 ```
             <meta-data
                 android:name="serviceid"
                 android:value="你的serverid"></meta-data>
-                ```
+            
             <meta-data
                 android:name="characteristicid"
                 android:value="你的特征值id"></meta-data>
-                ```
+             
             <meta-data
                 android:name="notifyid"
                 android:value="你的notifyid"></meta-data>
-                ```
-                ```
+           
+```
 
-### 步骤二 搜索&连接：让希望使用蓝牙功能的界面继承库的BaseActivity，然后调用其中的方法下面做对应的说明，具体可以参考例子。
+### 步骤二 搜索&连接
+让希望使用蓝牙功能的界面继承库的BaseActivity，然后调用其中的方法下面做对应的说明，具体可以参考例子。
 ```
 1.搜索 public void stratScan(boolean scan);//蓝牙搜索方法
  有新设备加入会调用 
@@ -76,19 +77,19 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
  主要方法： 
  ```
  1.public void stratScan(boolean scan);//搜索蓝牙
-```
+
  2.public void setmStartBleActivity(boolean mStartBleActivity);//设置启动界面
-```
+
  3.public void connecdevice(int postion);//连接设备
-```
+
  4.public void  disConnectCallback(){};//蓝牙连接断开时的回调
-```
+
  5.public void  connectCallback(){};//蓝牙连接成功的回调
-```
+
  6.public void  initServerCallback(){};//蓝牙服务初始化成功的回调
-```
+
  7.public void  scanCallback(){};//搜索到新设备的蓝牙回调
-```
+
  8.public void  dataGetCallback(byte [] getdata){};//接受到数据后的蓝牙回调
 ```
  ## 六，项目计划

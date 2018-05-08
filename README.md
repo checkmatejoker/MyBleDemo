@@ -42,12 +42,12 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
  有新设备加入会调用 
  public void scanCallback();//蓝牙搜索到新设备后回掉
  同时会刷新存储蓝牙设备的列表AppManger.getAppManger().getmDevicelist();获取该列表后可以自行进行相关操作
-```
+
 2.连接 public void connecdevice(int postion);//蓝牙连接方法
  连接成功后会调用 
  public void connectCallback();
  连接成功后可进行相关操作。
-```
+
  PS:在蓝牙搜索的界面要设置该界面的界面属性为start界面，具体方法就是调用 setmStartBleActivity(true);
  该方法只能在初始化蓝牙服务的第一个界面调用一次，具体参考例子，并且要在supreme方法之前
 ```
@@ -56,7 +56,7 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
  1.发送数据
  调用单例对象
  CommondManger.getCommondManger().sendCommond(mbyte)；//mbyte为发送数组，一次最多20byte；
-```
+
  2.接受数据
  public void dataGetCallback(byte[] getdata);
  在该回调中会返回硬件发送过来的数据 getdata，最多也为20个byte，可以在该回调中处理数据。

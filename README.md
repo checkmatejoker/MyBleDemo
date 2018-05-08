@@ -4,9 +4,13 @@
 
 ##二.支持版本
 android4.3以上，项目配置如下
+```
 compileSdkVersion 27
+```
 minSdkVersion 18
+```
 argetSdkVersion 22
+```
 
 ##三.接入方式
 在需要使用的模块中引入
@@ -16,15 +20,19 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
 ###步骤一 配置：
 ```
 在希望初始化蓝牙的界面的activity包含中配置一下三个字段，例子中使用的是蓝牙列表界面，也是示例的第一个界面
+```
             <meta-data
                 android:name="serviceid"
                 android:value="你的serverid"></meta-data>
+                ```
             <meta-data
                 android:name="characteristicid"
                 android:value="你的特征值id"></meta-data>
+                ```
             <meta-data
                 android:name="notifyid"
                 android:value="你的notifyid"></meta-data>
+                ```
                 ```
 
 ###步骤二 搜索&连接：让希望使用蓝牙功能的界面继承库的BaseActivity，然后调用其中的方法下面做对应的说明，具体可以参考例子。

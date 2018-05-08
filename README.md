@@ -48,7 +48,7 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
  public void connectCallback();
  连接成功后可进行相关操作。
 
- PS:在蓝牙搜索的界面要设置该界面的界面属性为start界面，具体方法就是调用 setmStartBleActivity(true);
+ PS:在蓝牙搜索的界面要设置该界面的界面属性为start界面，具体方法即调用 setmStartBleActivity(true);
  该方法只能在初始化蓝牙服务的第一个界面调用一次，具体参考例子，并且要在supreme方法之前
 ```
 ### 步骤三 发送&接受数据
@@ -62,20 +62,23 @@ implementation 'com.mybledemo:tzybletool:1.0.+'
  在该回调中会返回硬件发送过来的数据 getdata，最多也为20个byte，可以在该回调中处理数据。
 ```
  ## 五，类以及方法说明
+ ```
  AppManger 
  功能：单例数据存储，以及通用属性值对象，后续会拓展。
  主要方法： 
  public  List<BluetoothDevice> getmDevicelist();//获取蓝牙列表
-```
+ ```
+ ```
  CommondManger 
  功能：单例数据发送对象，后续会拓展。
  主要方法：
  public void sendCommond(byte[] msenddata);//发送蓝牙数据
-```
+ ```
+  ```
  BaseActivity 
  功能：蓝牙服务集成基础activity对象，后续会拓展。
  主要方法： 
- ```
+
  1.public void stratScan(boolean scan);//搜索蓝牙
 
  2.public void setmStartBleActivity(boolean mStartBleActivity);//设置启动界面

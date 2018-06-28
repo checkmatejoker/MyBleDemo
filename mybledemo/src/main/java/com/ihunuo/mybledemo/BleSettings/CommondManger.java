@@ -7,6 +7,8 @@ import com.eleven.app.bluetoothlehelper.Peripheral;
 import com.ihunuo.mybledemo.BaseActivity;
 import com.ihunuo.mybledemo.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,11 +21,11 @@ public class CommondManger {
     private String mChracteristicStr = "";
 
     private String mNotityStr = "";
-    public static String madress = "";
+    public static List<String>  madress = new ArrayList<>();
 
 
     private BaseActivity baseActivity;
-    private Peripheral mPeripheral;
+    private List<Peripheral>  mPeripheral = new ArrayList<>();
     private static  CommondManger  commondManger;
 
     public static void initCommondManger(String service,String chart, String notitfy,BaseActivity mbaseActivity)
@@ -71,35 +73,42 @@ public class CommondManger {
     public void setmNotityStr(String mNotityStr) {
         this.mNotityStr = mNotityStr;
     }
-    public Peripheral getPeripheral() {
+    public List<Peripheral> getPeripheral() {
         return mPeripheral;
     }
 
-    public void setPeripheral(Peripheral peripheral) {
+    public void setPeripheral(List<Peripheral> peripheral) {
         mPeripheral = peripheral;
     }
 
     public void sendCommond(byte[] msenddata)
     {
+
         if (mPeripheral==null)
         {
             Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
             return;
         }
-        if (mPeripheral.getState()!=Peripheral.STATE_CONNECTED)
+        if (mPeripheral.size()<=0)
         {
             Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        boolean iscan = mPeripheral.write(getmServiceIdStr(),getmChracteristicStr(),msenddata,false);
-        if (iscan)
+        for (int i = 0;i<mPeripheral.size();i++)
         {
-            Log.d("CommondManger","发送成功");
+            boolean iscan = mPeripheral.get(i).write(getmServiceIdStr(),getmChracteristicStr(),msenddata,false);
+            if (iscan)
+            {
+                Log.d("CommondManger","设备"+i+"发送成功");
+            }
+            else
+            {
+                Log.d("CommondManger","设备"+i+"发送失败");
+            }
         }
-        else
-        {
-            Log.d("CommondManger","发送失败");
-        }
+
+
+
     }
 }

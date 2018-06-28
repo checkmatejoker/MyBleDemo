@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ihunuo.mybledemo.BaseActivity;
 import com.ihunuo.mybledemo.BleSettings.CommondManger;
@@ -15,6 +16,9 @@ public class BlueToothActivity extends BaseActivity implements DeviceAdapter.Lis
     ListView mBultoothlistView;
     Button mReScan;
     DeviceAdapter mDeviceAdapter;
+
+    private TextView mtextview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,15 @@ public class BlueToothActivity extends BaseActivity implements DeviceAdapter.Lis
         mBultoothlistView.setAdapter(mDeviceAdapter);
         mDeviceAdapter.setListener(this);
         mDeviceAdapter.notifyDataSetChanged();
+
+        mtextview =(TextView)findViewById(R.id.comple);
+        mtextview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(BlueToothActivity.this, MainActivity.class);
+                startActivityForResult(intent, 109);
+            }
+        });
     }
 
     @Override
@@ -62,8 +75,7 @@ public class BlueToothActivity extends BaseActivity implements DeviceAdapter.Lis
         super.connectCallback();
         mDeviceAdapter.notifyDataSetChanged();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivityForResult(intent, 109);
+
 
     }
 }

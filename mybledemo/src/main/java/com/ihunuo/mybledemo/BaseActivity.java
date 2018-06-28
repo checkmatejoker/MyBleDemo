@@ -94,11 +94,12 @@ public class BaseActivity extends AppCompatActivity {
 
             mBluetoothLEService = ((BluetoothLEService.LocalBinder) service).getService();
 
+            CommondManger.getCommondManger().getPeripheral().clear();
             List<Peripheral> peripheralList = mBluetoothLEService.getConnectedPeripherals();
             for (Peripheral p : peripheralList) {
                 p.setCallback(mPeripheralCallback);
-                CommondManger.getCommondManger().setPeripheral(p);
-                CommondManger.getCommondManger().getPeripheral().setCallback(mPeripheralCallback);
+                CommondManger.getCommondManger().getPeripheral().add(p);
+
             }
             runOnUiThread(new Runnable() {
                 @Override
@@ -111,9 +112,10 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             List<Peripheral> peripheralList = mBluetoothLEService.getConnectedPeripherals();
+            CommondManger.getCommondManger().getPeripheral().clear();
             for (Peripheral p : peripheralList) {
                 p.setCallback(null);
-                CommondManger.getCommondManger().getPeripheral().setCallback(null);
+                CommondManger.getCommondManger().getPeripheral().add(p);
             }
         }
     };
@@ -123,22 +125,35 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public void onConnected(Peripheral peripheral) {
             super.onConnected(peripheral);
-            CommondManger.getCommondManger().setPeripheral(peripheral);
-            CommondManger.madress = peripheral.getAddress();
+            CommondManger.madress.add(peripheral.getAddress()) ;
+
+            for (int i = 0;i<CommondManger.getCommondManger().getPeripheral().size();i++)
+            {
+                if (peripheral.getAddress().equals(CommondManger.getCommondManger().getPeripheral().get(i).getAddress()))
+                {
+                    CommondManger.getCommondManger().getPeripheral().set(i,peripheral);
+                }
+            }
         }
 
         @Override
         public void onDisconnected(final Peripheral peripheral) {
             super.onDisconnected(peripheral);
             Log.e(TAG, "onDisconnected");
-            CommondManger.madress = "";
+            CommondManger.madress.clear();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     disConnectCallback();
                     showToast("连接断开");
                     peripheral.setCallback(null);
-                    CommondManger.getCommondManger().getPeripheral().setCallback(null);
+                    for (int i = 0;i<CommondManger.getCommondManger().getPeripheral().size();i++)
+                    {
+                        if (peripheral.getAddress().equals(CommondManger.getCommondManger().getPeripheral().get(i).getAddress()))
+                        {
+                            CommondManger.getCommondManger().getPeripheral().set(i,peripheral);
+                        }
+                    }
                     //重新搜索
 
                 }
@@ -337,16 +352,10 @@ public class BaseActivity extends AppCompatActivity {
             showdiss(this,getResources().getString(R.string.connect));
             Peripheral pre = mBluetoothLEService.findPeripheralWithAddress(AppManger.getAppManger().getmDevicelist().get(postion).getAddress());
 
-            if (checkConnection())
-            {
-                mloaddiag.dismiss();
-            }
-            else
-            {
                 pre = mBluetoothLEService.connect(AppManger.getAppManger().getmDevicelist().get(postion).getAddress());
                 pre.setCallback(mPeripheralCallback);
 
-            }
+
         }
 
     }

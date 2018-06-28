@@ -103,14 +103,16 @@ public class DeviceAdapter extends BaseAdapter {
         BluetoothDevice device = AppManger.getAppManger().getmDevicelist().get(position);
         devicenametext.setText(device.getName());
         RelativeLayout relativeLayout = (RelativeLayout) convertView.findViewById(R.id.item_bg);
+        relativeLayout.setBackgroundColor(mContext.getResources().getColor(R.color.deviceunselectcolor));
 
-        if (CommondManger.madress.equals(device.getAddress()))
+
+        for (int i = 0;i<CommondManger.madress.size();i++)
         {
-            relativeLayout.setBackgroundColor(mContext.getResources().getColor(R.color.deviceselectcolor));
-        }
-        else
-        {
-            relativeLayout.setBackgroundColor(mContext.getResources().getColor(R.color.deviceunselectcolor));
+            if (CommondManger.madress.get(i).equals(device.getAddress()))
+            {
+                relativeLayout.setBackgroundColor(mContext.getResources().getColor(R.color.deviceselectcolor));
+            }
+
         }
 
         convertView.setOnClickListener(new View.OnClickListener() {

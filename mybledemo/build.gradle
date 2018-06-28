@@ -32,10 +32,10 @@ dependencies {
 }
 //添加
 publish {
-    userOrg = 'checkmatejoker'                                  //bintray.com用户名
+    userOrg = 'checkmatejoker'                          //bintray.com用户名
     groupId = 'com.mybledemo'                           //jcenter上的路径
     artifactId = 'tzybletool'                          //项目名称
-    publishVersion = '1.0.1'                                //版本号
+    publishVersion = '1.0.2'                                //版本号
     desc = 'a tool to connect bluetooth4.0 for android'
     website = 'https://github.com/checkmatejoker/MyBleDemo'
 }

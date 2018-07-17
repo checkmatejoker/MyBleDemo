@@ -2,6 +2,7 @@ package com.ihunuo.mybledemo;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
@@ -209,6 +210,20 @@ public class BaseActivity extends AppCompatActivity {
         public void onCharacteristicRead(final Peripheral peripheral,final BluetoothGattCharacteristic characteristic,final int status) {
             super.onCharacteristicRead(peripheral, characteristic, status);
         }
+
+        @Override
+        public void onCharacteristicWrite(Peripheral peripheral, BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(peripheral, characteristic, status);
+            datagetok(true);
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                CommondManger.getCommondManger().setWriteCharacteristicError(false);
+            } else {
+                CommondManger.getCommondManger().setWriteCharacteristicError(true);
+                Log.e(TAG, "Characteristic write error: " + status + "try again.");
+            }
+            CommondManger.getCommondManger().setWriteCharacteristicOk(true);
+        }
     };
     public void showToast(final String text) {
         mHandler.post(new Runnable() {
@@ -242,6 +257,8 @@ public class BaseActivity extends AppCompatActivity {
     public void  initServerCallback(){};
     public void  scanCallback(){};
     public void  dataGetCallback(byte [] getdata){};
+
+    public void  datagetok(boolean isok){};
 
     public void showdiss(Context mconx,String string)
     {

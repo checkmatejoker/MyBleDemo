@@ -8,6 +8,7 @@ import com.ihunuo.mybledemo.BaseActivity;
 import com.ihunuo.mybledemo.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,11 @@ import java.util.UUID;
  * 功能介绍:命令管理对象
  */
 public class CommondManger {
+    private static final String TAG = "CommondManger";
+    private static int MTU_SIZE_EXPECT = 300;
+    private static int MTU_PAYLOAD_SIZE_LIMIT = 20;
+    private boolean isUnpackSending = false;
+
     private String mServiceIdStr = "";
     private String mChracteristicStr = "";
 
@@ -27,6 +33,28 @@ public class CommondManger {
     private BaseActivity baseActivity;
     private List<Peripheral>  mPeripheral = new ArrayList<>();
     private static  CommondManger  commondManger;
+
+    private  Peripheral mPre;
+
+
+    public boolean isWriteCharacteristicError() {
+        return writeCharacteristicError;
+    }
+
+    public void setWriteCharacteristicError(boolean writeCharacteristicError) {
+        this.writeCharacteristicError = writeCharacteristicError;
+    }
+
+    public boolean isWriteCharacteristicOk() {
+        return isWriteCharacteristicOk;
+    }
+
+    public void setWriteCharacteristicOk(boolean writeCharacteristicOk) {
+        isWriteCharacteristicOk = writeCharacteristicOk;
+    }
+
+    private volatile boolean writeCharacteristicError = false;
+    private volatile boolean isWriteCharacteristicOk = true;
 
     public static void initCommondManger(String service,String chart, String notitfy,BaseActivity mbaseActivity)
     {
@@ -108,7 +136,146 @@ public class CommondManger {
             }
         }
 
+    }
+    public void sendCommond(byte[] msenddata,int index)
+    {
 
+        if (mPeripheral==null)
+        {
+            Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (mPeripheral.size()<=0)
+        {
+            Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mPre = mPeripheral.get(index);
+
+        ThreadUnpackSend  mUnpackThread = new ThreadUnpackSend(msenddata);
+        mUnpackThread.start();
 
     }
+
+    private void SendData(byte[] realData) {
+        // for GKI get buffer error exit
+        long timeCost = 0;
+
+        if (mPeripheral==null)
+        {
+            Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (mPeripheral.size()<=0)
+        {
+            Toast.makeText(getBaseActivity(), getBaseActivity().getResources().getString(R.string.warnning1), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // initial the status
+        writeCharacteristicError = true;
+
+        while(true == writeCharacteristicError) {
+            // mBluetoothGatt.getConnectionState(mDevice) can not use in thread, so we use a flag to
+            // break the circulate when disconnect the connect
+            if(mPre.getState()==Peripheral.STATE_CONNECTED) {
+                // for GKI get buffer error exit
+                timeCost = System.currentTimeMillis();
+
+
+                // initial the status
+                isWriteCharacteristicOk = false;
+
+                // Set the send type(command)
+                boolean missend = mPre.write(getmServiceIdStr(),getmChracteristicStr(),realData,false);
+                if (!missend) {
+                    Log.e(TAG, "发送失败");
+                }
+
+                // wait for characteristic write ok
+                while(isWriteCharacteristicOk != true) {
+                    if(mPre.getState()!=Peripheral.STATE_CONNECTED) {
+                        Log.e(TAG, "break the circulate when disconnect the connect, no callback");
+                        break;
+                    }
+
+                    // for GKI get buffer error exit
+                    // if 10 seconds no callback we think GKI get buffer error
+                    if((System.currentTimeMillis() - timeCost)/1000 > 10) {
+                        Log.e(TAG, "GKI get buffer error close the BT and exit");
+                        // becouse GKI error, so we should close the bt
+//                        if (mBluetoothAdapter.isEnabled()) {
+//                            Log.d(TAG, "close bluetooth");
+//                            mBluetoothAdapter.disable();
+//                        }
+
+                        // close the activity
+                    }
+                };
+
+                Log.e(TAG, "writeCharacteristicError stop Status:" + writeCharacteristicError);
+            } else {
+                // break the circulate when disconnect the connect
+                Log.e(TAG, "break the circulate when disconnect the connect, write error");
+                break;
+            }
+        }
+
+        Log.d(TAG, "send data is: " + Arrays.toString(realData));
+
+        // update tx counter, only write ok then update the counter
+        if(false == writeCharacteristicError) {
+            Log.e(TAG, "send ok" );
+
+        }
+
+        // send the msg, here may send less times MSG, so we use the StringBuildler
+
+    }
+
+    // unpack and send thread
+    public class ThreadUnpackSend extends Thread {
+        byte[] sendData;
+        ThreadUnpackSend(byte[] data) {
+            sendData = data;
+        }
+        public void run() {
+            Log.d(TAG, "ThreadUnpackSend is run");
+            // time test
+            Log.e("TIME_thread run", String.valueOf(System.currentTimeMillis()));
+            // set the unpack sending flag
+            isUnpackSending = true;
+            // send data to the remote device
+
+            // unpack the send data, because of the MTU size is limit
+            int length = sendData.length;
+            int unpackCount = 0;
+            byte[] realSendData;
+            do {
+
+                if(length <= MTU_PAYLOAD_SIZE_LIMIT) {
+                    realSendData = new byte[length];
+                    System.arraycopy(sendData, unpackCount * MTU_PAYLOAD_SIZE_LIMIT, realSendData, 0, length);
+                    // update length value
+                    length = 0;
+                } else {
+                    realSendData = new byte[MTU_PAYLOAD_SIZE_LIMIT];
+                    System.arraycopy(sendData, unpackCount * MTU_PAYLOAD_SIZE_LIMIT, realSendData, 0, MTU_PAYLOAD_SIZE_LIMIT);
+
+                    // update length value
+                    length = length - MTU_PAYLOAD_SIZE_LIMIT;
+                }
+                SendData(realSendData);
+                // unpack counter increase
+                unpackCount++;
+            } while(length != 0);
+
+            // set the unpack sending flag
+
+            isUnpackSending = false;
+            Log.d(TAG, "ThreadUnpackSend stop");
+        }//if(null != mTestCharacter)
+    }//run
+
 }
